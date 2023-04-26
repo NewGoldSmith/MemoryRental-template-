@@ -1,0 +1,59 @@
+<h1>MemoryRental クラス</h1>
+<p><code>MemoryRental</code>は、メモリのレンタルを管理するためのテンプレートクラスです。このクラスは、Windows専用です。</p>
+
+<h2>条件付きコンパイルオプション</h2>
+<ul>
+  <li><code>USING_CRITICAL_SECTION</code>: 定義されている場合、クリティカルセクションが使用されます。</li>
+  <li><code>CONFIRM_POINT</code>: 定義されている場合、確認が必要です。</li>
+  <li><code>USING_DEBUG_STRING</code>: 定義されている場合、デストラクタで整合性確認が行われます。</li>
+</ul>
+
+<h2>コンストラクタ</h2>
+<p>このクラスのコンストラクタは、2つの引数を受け取ります。</p>
+<ol>
+  <li>メモリバッファへのポインタ</li>
+  <li>メモリバッファのサイズ (ただし、このサイズは2のべき乗でなければなりません)</li>
+</ol>
+
+<h2>メソッド</h2>
+<h3>Lend</h3>
+<p><code>Lend</code>メソッドは、メモリバッファからメモリを借りるために使用されます。</p>
+
+<h3>Return</h3>
+<p><code>Return</code>メソッドは、借りたメモリを返すために使用されます。このメソッドは、1つの引数を受け取ります。この引数は、返すメモリへのポインタです。</p>
+
+<h3>ReInitialize</h3>
+<p><code>ReInitialize</code>メソッドは、メモリバッファを再初期化するために使用されます。このメソッドは、2つの引数を受け取ります。1つ目の引数は、新しいメモリバッファへのポインタです。2つ目の引数は、新しいメモリバッファのサイズです。ただし、このサイズは2のべき乗でなければなりません。</p>
+
+<h3>DebugString</h3>
+<p><code>DebugString</code>メソッドは、デバッグ文字列を設定するために使用されます。このメソッドは、1つの引数を受け取ります。この引数は、デバッグ文字列です。ただし、このメソッドは、<code>USING_DEBUG_STRING</code>が定義されている場合にのみ使用されます。</p>
+
+<h2>保護されたメンバ変数</h2>
+<ul>
+  <li><code>ppBuf</code>: メモリバッファへのポインタです。</li>
+  <li><code>size</code>: メモリバッファのサイズです。</li>
+  <li><code>front</code>, <code>end</code>: メモリバッファ内の位置を示します。</li>
+  <li><code>mask</code>: サイズから1を引いた値です。</li>
+</ul>
+<h2>使用例</h2>
+<pre><code>
+#include "MemoryRental.h"
+
+int main()
+{
+    constexpr size_t size = 1024;
+    int buf[size];
+    MemoryRental&lt;int&gt; rental(buf, size);
+
+    int* p1 = rental.Lend();
+    *p1 = 1;
+
+    int* p2 = rental.Lend();
+    *p2 = 2;
+
+    rental.Return(p1);
+    rental.Return(p2);
+
+    return 0;
+}
+</code></pre>
